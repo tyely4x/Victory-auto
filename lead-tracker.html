@@ -706,17 +706,114 @@ body.card-mode .leads-cards-grid { display: flex; }
 
 /* ── RESPONSIVE ──────────────────────────────────────────── */
 @media (max-width: 1100px) {
-  .kpi-grid      { grid-template-columns: 1fr 1fr; }
+  .kpi-grid         { grid-template-columns: 1fr 1fr; }
   .dash-row.col-6-4 { grid-template-columns: 1fr; }
-  .lead-drawer   { width: 380px; }
+  .lead-drawer      { width: 380px; }
 }
+
+/* ── MOBILE BOTTOM NAV ───────────────────────────────────── */
+.mobile-bottom-nav { display: none; }
+
 @media (max-width: 768px) {
-  .sidebar       { width: var(--sidebar-sm); }
-  .brand-text, .nav-item-label, .nav-badge, .conn-text, .nav-group-label { display: none; }
-  .kpi-grid      { grid-template-columns: 1fr 1fr; }
-  .dash-row.col-3-3 { grid-template-columns: 1fr; }
-  .lead-drawer   { width: 100%; }
-  .brand-logo    { max-width: 100px; }
+  /* Hide sidebar entirely — replaced by bottom nav */
+  .sidebar { display: none !important; }
+
+  /* Topbar: compact, just title + connection */
+  .topbar { padding: 0 16px; }
+  .topbar-search-wrap { display: none; }
+  .topbar-breadcrumb .crumb-active { font-size: 16px; }
+  #btn-seed { display: none; }
+
+  /* Content area gains bottom padding for nav bar */
+  .content-area { padding: 16px 14px 90px; }
+
+  /* KPI grid: 2x2 with taller cards */
+  .kpi-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .kpi-card { padding: 16px 16px; }
+  .kpi-value { font-size: 28px; }
+
+  /* Dashboard rows: all single column */
+  .dash-row.col-6-4,
+  .dash-row.col-3-3,
+  .dash-row.col-3,
+  .dash-row.col-2 { grid-template-columns: 1fr; }
+
+  /* Leads: always card mode on mobile, hide table */
+  .table-card { display: none !important; }
+  .leads-cards-grid { display: flex !important; }
+  .view-toggle-group { display: none; }
+
+  /* Filter bar: horizontal scroll instead of wrap */
+  .leads-controls { flex-wrap: nowrap; overflow-x: auto; padding-bottom: 6px; gap: 6px; }
+  .leads-controls::-webkit-scrollbar { display: none; }
+  .filter-select { flex-shrink: 0; font-size: 11.5px; padding: 6px 22px 6px 8px; }
+  .filter-divider { display: none; }
+
+  /* Pipeline: cards stay scrollable horizontally */
+  .pipeline-board { padding-bottom: 8px; }
+
+  /* Drawer: full screen */
+  .lead-drawer { width: 100%; }
+
+  /* Modal: full-screen bottom sheet */
+  .modal-overlay { padding: 0; align-items: flex-end; }
+  .modal-panel {
+    max-width: 100%; border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    max-height: 92vh; overflow-y: auto;
+    animation: sheetUp 0.28s cubic-bezier(.4,0,.2,1);
+  }
+  @keyframes sheetUp { from { transform: translateY(100%); } to { transform: none; } }
+
+  /* Bottom nav bar */
+  .mobile-bottom-nav {
+    display: flex; position: fixed; bottom: 0; left: 0; right: 0;
+    height: 62px; z-index: 50;
+    background: rgba(8,8,9,0.96);
+    border-top: 1px solid rgba(255,255,255,0.08);
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  .mob-tab {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    justify-content: center; gap: 3px;
+    background: transparent; border: none; color: var(--txt-d);
+    font-size: 10px; font-weight: 500; font-family: inherit;
+    cursor: pointer; transition: color 0.15s ease; position: relative;
+    padding: 0; -webkit-tap-highlight-color: transparent;
+  }
+  .mob-tab span:not(.mob-badge) { font-size: 10px; font-weight: 500; line-height: 1; }
+  .mob-tab:hover { color: var(--txt); }
+  .mob-tab.active { color: var(--blue); }
+  .mob-tab.active svg { filter: drop-shadow(0 0 6px rgba(200,16,46,0.5)); }
+
+  /* Center "+" add button */
+  .mob-tab-add {
+    width: 48px; height: 48px; flex: 0 0 64px;
+    background: var(--blue); border-radius: 50%; color: #fff !important;
+    margin-top: -18px;
+    box-shadow: 0 4px 20px rgba(200,16,46,0.5);
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .mob-tab-add:active { transform: scale(0.93); box-shadow: 0 2px 10px rgba(200,16,46,0.4); }
+
+  /* Notification badge on Leads tab */
+  .mob-badge {
+    position: absolute; top: 6px; right: calc(50% - 18px);
+    background: var(--blue); color: #fff; border-radius: 999px;
+    font-size: 8px; font-weight: 800; padding: 1px 5px; min-width: 14px;
+    text-align: center; line-height: 14px; height: 14px;
+  }
+
+  /* Larger tap targets for drawer close / row actions */
+  .drawer-close { width: 40px; height: 40px; }
+  .btn-icon-sm  { width: 36px; height: 36px; }
+  .follow-toggle { width: 34px; height: 34px; }
+
+  /* Page header on mobile */
+  .page-header { margin-bottom: 14px; }
+  .page-title  { font-size: 18px; }
+  .page-actions .date-pill { display: none; }
 }
 
 /* ═══════════════════════════════════════════════════════════
@@ -1780,6 +1877,9 @@ function setView(name){
   $(`view-${name}`)?.classList.add('active');
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   $(`nav-${name}`)?.classList.add('active');
+  // Sync mobile bottom nav
+  document.querySelectorAll('.mob-tab[data-view]').forEach(t=>t.classList.remove('active'));
+  $(`mob-tab-${name}`)?.classList.add('active');
   $('topbar-title').textContent=VIEW_TITLES[name]||name;
   if(name==='dashboard'){ renderDashboard(); }
   else if(name==='leads'){ renderLeads(); }
@@ -1822,6 +1922,12 @@ document.querySelectorAll('.nav-item[data-action]').forEach(item=>{
     else if(a==='clear') clearAll();
   });
 });
+// Mobile bottom nav
+document.querySelectorAll('.mob-tab[data-view]').forEach(tab=>{
+  tab.addEventListener('click',()=>setView(tab.dataset.view));
+});
+$('mob-tab-add').addEventListener('click',()=>openModal());
+$('mob-tab-more').addEventListener('click',()=>exportCSV());
 
 // Sidebar collapse
 $('sidebar-toggle').addEventListener('click',()=>{ $('sidebar').classList.toggle('collapsed'); });
@@ -1968,5 +2074,29 @@ async function clearAll(){
   }
 })();
 </script>
+
+<!-- ── MOBILE BOTTOM NAV ──────────────────────────────────── -->
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+  <button class="mob-tab active" data-view="dashboard" id="mob-tab-dashboard">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+    <span>Dashboard</span>
+  </button>
+  <button class="mob-tab" data-view="leads" id="mob-tab-leads">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>Leads</span>
+    <span class="mob-badge" id="mob-leads-badge" style="display:none"></span>
+  </button>
+  <button class="mob-tab mob-tab-add" id="mob-tab-add">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+  <button class="mob-tab" data-view="pipeline" id="mob-tab-pipeline">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+    <span>Pipeline</span>
+  </button>
+  <button class="mob-tab" id="mob-tab-more" data-action="export">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <span>Export</span>
+  </button>
+</nav>
 </body>
 </html>
