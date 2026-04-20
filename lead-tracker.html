@@ -1372,6 +1372,30 @@ table.leads-tbl tbody tr:hover td:first-child     { box-shadow: inset 3px 0 0 #c
 <!-- TOAST -->
 <div class="toast-wrap" id="toast-wrap"></div>
 
+<!-- ── MOBILE BOTTOM NAV ──────────────────────────────────── -->
+<nav class="mobile-bottom-nav" id="mobile-bottom-nav">
+  <button class="mob-tab active" data-view="dashboard" id="mob-tab-dashboard">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
+    <span>Dashboard</span>
+  </button>
+  <button class="mob-tab" data-view="leads" id="mob-tab-leads">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+    <span>Leads</span>
+    <span class="mob-badge" id="mob-leads-badge" style="display:none"></span>
+  </button>
+  <button class="mob-tab mob-tab-add" id="mob-tab-add">
+    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+  </button>
+  <button class="mob-tab" data-view="pipeline" id="mob-tab-pipeline">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+    <span>Pipeline</span>
+  </button>
+  <button class="mob-tab" id="mob-tab-more" data-action="export">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    <span>Export</span>
+  </button>
+</nav>
+
 <!-- ═══════════════════════════════════════════════════════════
      JAVASCRIPT
 ═══════════════════════════════════════════════════════════ -->
@@ -2077,28 +2101,5 @@ async function clearAll(){
 })();
 </script>
 
-<!-- ── MOBILE BOTTOM NAV ──────────────────────────────────── -->
-<nav class="mobile-bottom-nav" id="mobile-bottom-nav">
-  <button class="mob-tab active" data-view="dashboard" id="mob-tab-dashboard">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="9" rx="1"/><rect x="14" y="3" width="7" height="5" rx="1"/><rect x="14" y="12" width="7" height="9" rx="1"/><rect x="3" y="16" width="7" height="5" rx="1"/></svg>
-    <span>Dashboard</span>
-  </button>
-  <button class="mob-tab" data-view="leads" id="mob-tab-leads">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-    <span>Leads</span>
-    <span class="mob-badge" id="mob-leads-badge" style="display:none"></span>
-  </button>
-  <button class="mob-tab mob-tab-add" id="mob-tab-add">
-    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-  </button>
-  <button class="mob-tab" data-view="pipeline" id="mob-tab-pipeline">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-    <span>Pipeline</span>
-  </button>
-  <button class="mob-tab" id="mob-tab-more" data-action="export">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    <span>Export</span>
-  </button>
-</nav>
 </body>
 </html>
