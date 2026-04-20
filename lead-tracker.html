@@ -2041,8 +2041,10 @@ $('btn-notif').addEventListener('click',()=>{ hideBadge($('notif-badge')); setVi
 
 /* ── ACTIONS ────────────────────────────────────────────────── */
 async function syncManual(){
-  if(!state.connected){ toast('Not connected to backend.','info'); return; }
-  await loadData(); render(); toast('Synced with backend.','success',2500);
+  toast('Connecting to backend…','info',2000);
+  await loadData(); render();
+  if(state.connected) toast('Synced with backend.','success',2500);
+  else toast('Could not reach backend. Check your connection.','info',4000);
 }
 function exportCSV(){
   if(!state.leads.length){ alert('No leads to export.'); return; }
