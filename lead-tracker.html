@@ -974,6 +974,84 @@ table.leads-tbl tbody tr:hover td:first-child     { box-shadow: inset 3px 0 0 #c
 /* 21. Conn dot online pulse: keep as teal (status indicator) */
 @keyframes connPulse { 50% { box-shadow: 0 0 12px rgba(16,217,160,0.4); } }
 .conn-dot-sm.online { animation: connPulse 2s ease-in-out infinite; }
+
+/* ── SETTINGS VIEW ────────────────────────────────────────── */
+.settings-section { margin-bottom: 24px; }
+.settings-section-title {
+  display: flex; align-items: center; gap: 7px;
+  font-size: 11px; font-weight: 700; letter-spacing: .06em;
+  text-transform: uppercase; color: var(--txt-d);
+  margin-bottom: 10px; padding: 0 2px;
+}
+.settings-card {
+  background: var(--card);
+  border: 1px solid var(--bdr);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  backdrop-filter: blur(18px) saturate(140%);
+  -webkit-backdrop-filter: blur(18px) saturate(140%);
+}
+.settings-row {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 16px 20px; gap: 16px;
+}
+.settings-divider { height: 1px; background: var(--bdr); margin: 0 20px; }
+.settings-label { flex: 1; min-width: 0; }
+.settings-label-title { font-size: 13px; font-weight: 600; color: var(--white); margin-bottom: 2px; }
+.settings-label-sub   { font-size: 11px; color: var(--txt-d); line-height: 1.4; }
+.settings-control { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
+.settings-value-label { font-size: 12px; font-weight: 600; color: var(--blue); min-width: 36px; text-align: right; }
+
+/* iOS-style toggle */
+.toggle-switch { position: relative; display: inline-block; cursor: pointer; }
+.toggle-switch input { opacity: 0; width: 0; height: 0; position: absolute; }
+.toggle-track {
+  display: block; width: 44px; height: 26px;
+  background: rgba(255,255,255,0.12);
+  border-radius: 13px; transition: background var(--t);
+  position: relative;
+}
+.toggle-thumb {
+  position: absolute; top: 3px; left: 3px;
+  width: 20px; height: 20px; border-radius: 50%;
+  background: #fff; transition: transform var(--t), background var(--t);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.35);
+}
+.toggle-switch input:checked + .toggle-track { background: var(--blue); }
+.toggle-switch input:checked + .toggle-track .toggle-thumb { transform: translateX(18px); }
+
+/* Range slider */
+.settings-slider {
+  -webkit-appearance: none; appearance: none;
+  width: 160px; height: 4px; border-radius: 2px;
+  background: rgba(255,255,255,0.12); outline: none; cursor: pointer;
+}
+.settings-slider::-webkit-slider-thumb {
+  -webkit-appearance: none; appearance: none;
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--blue); cursor: pointer;
+  box-shadow: 0 0 0 3px rgba(91,141,245,0.25);
+}
+.settings-slider::-moz-range-thumb {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: var(--blue); cursor: pointer; border: none;
+}
+
+/* Color swatches */
+.color-swatches { display: flex; gap: 8px; align-items: center; }
+.color-swatch {
+  width: 26px; height: 26px; border-radius: 50%;
+  cursor: pointer; border: 2px solid transparent;
+  transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+  flex-shrink: 0;
+}
+.color-swatch:hover  { transform: scale(1.15); }
+.color-swatch.active { border-color: #fff; box-shadow: 0 0 0 3px rgba(255,255,255,0.18); }
+
+@media (max-width: 768px) {
+  .settings-row { padding: 14px 16px; gap: 12px; }
+  .settings-slider { width: 120px; }
+}
 </style>
 </head>
 <body>
@@ -1014,6 +1092,12 @@ table.leads-tbl tbody tr:hover td:first-child     { box-shadow: inset 3px 0 0 #c
       <div class="nav-item" data-action="sync" id="nav-sync">
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
         <span class="nav-item-label">Sync Messages</span>
+      </div>
+
+      <div class="nav-group-label" style="margin-top:8px;">App</div>
+      <div class="nav-item" data-view="settings" id="nav-settings">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        <span class="nav-item-label">Settings</span>
       </div>
     </div>
 
@@ -1293,6 +1377,171 @@ table.leads-tbl tbody tr:hover td:first-child     { box-shadow: inset 3px 0 0 #c
         <div class="pipeline-board" id="pipeline-board"></div>
       </div><!-- /pipeline -->
 
+      <!-- ══════════ SETTINGS VIEW ══════════════════════════ -->
+      <div class="view" id="view-settings">
+        <div class="page-header">
+          <div>
+            <div class="page-title">Settings</div>
+            <div class="page-sub">Appearance, notifications, and display preferences</div>
+          </div>
+        </div>
+
+        <!-- APPEARANCE -->
+        <div class="settings-section">
+          <div class="settings-section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+            Appearance
+          </div>
+          <div class="settings-card">
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Background Brightness</div>
+                <div class="settings-label-sub">Adjust the darkness of the app background</div>
+              </div>
+              <div class="settings-control" style="flex-direction:column;align-items:flex-end;gap:6px;">
+                <span class="settings-value-label" id="brightness-val">50%</span>
+                <input type="range" class="settings-slider" id="s-brightness" min="0" max="100" value="50">
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Accent Color</div>
+                <div class="settings-label-sub">Primary highlight color throughout the app</div>
+              </div>
+              <div class="settings-control">
+                <div class="color-swatches" id="color-swatches">
+                  <div class="color-swatch active" data-color="crimson"  style="background:#c8102e;" title="Victory Red"></div>
+                  <div class="color-swatch" data-color="blue"     style="background:#3b82f6;" title="Royal Blue"></div>
+                  <div class="color-swatch" data-color="purple"   style="background:#8b5cf6;" title="Purple"></div>
+                  <div class="color-swatch" data-color="emerald"  style="background:#10b981;" title="Emerald"></div>
+                  <div class="color-swatch" data-color="orange"   style="background:#f97316;" title="Orange"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- NOTIFICATIONS -->
+        <div class="settings-section">
+          <div class="settings-section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            Notifications
+          </div>
+          <div class="settings-card">
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">SMS Alerts</div>
+                <div class="settings-label-sub">Text message to +1 (901) 616-8822 on new leads</div>
+              </div>
+              <div class="settings-control">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="s-sms" checked>
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </label>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Push Notifications</div>
+                <div class="settings-label-sub">Home screen popup when installed as PWA</div>
+              </div>
+              <div class="settings-control">
+                <label class="toggle-switch">
+                  <input type="checkbox" id="s-push" checked>
+                  <span class="toggle-track"><span class="toggle-thumb"></span></span>
+                </label>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Alert Threshold</div>
+                <div class="settings-label-sub">Which lead tiers trigger notifications</div>
+              </div>
+              <div class="settings-control">
+                <select class="field-select" id="s-threshold" style="width:auto;min-width:140px;">
+                  <option value="hot">Hot only (80+)</option>
+                  <option value="warm" selected>Hot + Warm (55+)</option>
+                  <option value="all">All leads</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DISPLAY -->
+        <div class="settings-section">
+          <div class="settings-section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+            Display
+          </div>
+          <div class="settings-card">
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Default View</div>
+                <div class="settings-label-sub">Which screen opens when you launch the app</div>
+              </div>
+              <div class="settings-control">
+                <select class="field-select" id="s-default-view" style="width:auto;min-width:140px;">
+                  <option value="dashboard" selected>Dashboard</option>
+                  <option value="leads">All Leads</option>
+                  <option value="pipeline">Pipeline</option>
+                </select>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Default Sort</div>
+                <div class="settings-label-sub">How leads are ordered in the Leads view</div>
+              </div>
+              <div class="settings-control">
+                <select class="field-select" id="s-default-sort" style="width:auto;min-width:140px;">
+                  <option value="score" selected>Score (High → Low)</option>
+                  <option value="createdAt">Date (Newest first)</option>
+                  <option value="name">Name (A → Z)</option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- DATA -->
+        <div class="settings-section">
+          <div class="settings-section-title">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+            Data
+          </div>
+          <div class="settings-card">
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Export All Leads</div>
+                <div class="settings-label-sub">Download a CSV of your entire lead database</div>
+              </div>
+              <div class="settings-control">
+                <button class="btn btn-ghost btn-sm" onclick="exportCSV()">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                  Export CSV
+                </button>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Clear All Leads</div>
+                <div class="settings-label-sub">Permanently delete every lead — cannot be undone</div>
+              </div>
+              <div class="settings-control">
+                <button class="btn btn-danger btn-sm" onclick="clearAll()">Clear All</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- /settings -->
+
     </div><!-- /content-area -->
   </div><!-- /main-wrap -->
 </div><!-- /app-shell -->
@@ -1390,9 +1639,9 @@ table.leads-tbl tbody tr:hover td:first-child     { box-shadow: inset 3px 0 0 #c
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
     <span>Pipeline</span>
   </button>
-  <button class="mob-tab" id="mob-tab-more" data-action="export">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    <span>Export</span>
+  <button class="mob-tab" data-view="settings" id="mob-tab-settings">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    <span>Settings</span>
   </button>
 </nav>
 
@@ -1898,7 +2147,7 @@ async function deleteLead(id){
 }
 
 /* ── VIEW SWITCHING ─────────────────────────────────────────── */
-const VIEW_TITLES={ dashboard:'Dashboard', leads:'All Leads', pipeline:'Pipeline Board' };
+const VIEW_TITLES={ dashboard:'Dashboard', leads:'All Leads', pipeline:'Pipeline Board', settings:'Settings' };
 function setView(name){
   state.currentView=name;
   document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));
@@ -1955,7 +2204,6 @@ document.querySelectorAll('.mob-tab[data-view]').forEach(tab=>{
   tab.addEventListener('click',()=>setView(tab.dataset.view));
 });
 $('mob-tab-add').addEventListener('click',()=>openModal());
-$('mob-tab-more').addEventListener('click',()=>exportCSV());
 
 // Sidebar collapse
 $('sidebar-toggle').addEventListener('click',()=>{ $('sidebar').classList.toggle('collapsed'); });
@@ -2091,10 +2339,97 @@ async function clearAll(){
   } catch(e){ toast('Error: '+e.message,'info',5000); }
 }
 
+/* ── SETTINGS ───────────────────────────────────────────────── */
+const SETTINGS_KEY = 'vas-settings-v1';
+const ACCENT_COLORS = {
+  crimson: { main:'#c8102e', light:'#e84060', dim:'rgba(200,16,46,0.10)',  glow:'rgba(200,16,46,0.22)'  },
+  blue:    { main:'#3b82f6', light:'#6ba3ff', dim:'rgba(59,130,246,0.10)', glow:'rgba(59,130,246,0.22)' },
+  purple:  { main:'#8b5cf6', light:'#a87ff8', dim:'rgba(139,92,246,0.10)', glow:'rgba(139,92,246,0.22)' },
+  emerald: { main:'#10b981', light:'#34d399', dim:'rgba(16,185,129,0.10)', glow:'rgba(16,185,129,0.22)' },
+  orange:  { main:'#f97316', light:'#fb923c', dim:'rgba(249,115,22,0.10)', glow:'rgba(249,115,22,0.22)' },
+};
+const defaultSettings = { brightness:50, accentColor:'blue', smsEnabled:true, pushEnabled:true, threshold:'warm', defaultView:'dashboard', defaultSort:'score' };
+
+function loadSettings(){ try{ return {...defaultSettings,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}; }catch{ return {...defaultSettings}; } }
+function saveSettings(s){ localStorage.setItem(SETTINGS_KEY,JSON.stringify(s)); }
+
+function applySettings(s){
+  const r=document.documentElement;
+  // Brightness: maps 0–100 to css filter 0.55–1.30
+  const bVal=(0.55+(s.brightness/100)*0.75).toFixed(2);
+  document.querySelector('.app-shell').style.filter=`brightness(${bVal})`;
+  // Accent color overrides --blue family
+  const ac=ACCENT_COLORS[s.accentColor]||ACCENT_COLORS.blue;
+  r.style.setProperty('--blue',     ac.main);
+  r.style.setProperty('--blue-d',   ac.main);
+  r.style.setProperty('--blue-l',   ac.light);
+  r.style.setProperty('--blue-dim', ac.dim);
+  r.style.setProperty('--blue-glow',ac.glow);
+  // Default sort
+  if(s.defaultSort) state.sort.key=s.defaultSort;
+}
+
+function syncSettingsUI(s){
+  const bv=$('s-brightness'); if(bv){ bv.value=s.brightness; $('brightness-val').textContent=s.brightness+'%'; }
+  const sms=$('s-sms'); if(sms) sms.checked=s.smsEnabled;
+  const push=$('s-push'); if(push) push.checked=s.pushEnabled;
+  const thr=$('s-threshold'); if(thr) thr.value=s.threshold;
+  const dv=$('s-default-view'); if(dv) dv.value=s.defaultView;
+  const ds=$('s-default-sort'); if(ds) ds.value=s.defaultSort;
+  document.querySelectorAll('.color-swatch').forEach(sw=>sw.classList.toggle('active',sw.dataset.color===s.accentColor));
+}
+
+function initSettings(){
+  const s=loadSettings(); applySettings(s); syncSettingsUI(s);
+
+  $('s-brightness')?.addEventListener('input',e=>{
+    const s2=loadSettings(); s2.brightness=+e.target.value;
+    $('brightness-val').textContent=s2.brightness+'%'; saveSettings(s2); applySettings(s2);
+  });
+
+  document.querySelectorAll('.color-swatch').forEach(sw=>{
+    sw.addEventListener('click',()=>{
+      const s2=loadSettings(); s2.accentColor=sw.dataset.color; saveSettings(s2); applySettings(s2);
+      document.querySelectorAll('.color-swatch').forEach(x=>x.classList.remove('active'));
+      sw.classList.add('active');
+    });
+  });
+
+  $('s-sms')?.addEventListener('change',e=>{
+    const s2=loadSettings(); s2.smsEnabled=e.target.checked; saveSettings(s2);
+    toast(s2.smsEnabled?'SMS alerts <strong>enabled</strong>.':'SMS alerts <strong>disabled</strong>.','info',2500);
+  });
+
+  $('s-push')?.addEventListener('change',e=>{
+    const s2=loadSettings(); s2.pushEnabled=e.target.checked; saveSettings(s2);
+    toast(s2.pushEnabled?'Push notifications <strong>enabled</strong>.':'Push notifications <strong>disabled</strong>.','info',2500);
+  });
+
+  $('s-threshold')?.addEventListener('change',e=>{
+    const s2=loadSettings(); s2.threshold=e.target.value; saveSettings(s2);
+    toast('Alert threshold updated.','success',2000);
+  });
+
+  $('s-default-view')?.addEventListener('change',e=>{
+    const s2=loadSettings(); s2.defaultView=e.target.value; saveSettings(s2);
+    toast('Default view updated.','success',2000);
+  });
+
+  $('s-default-sort')?.addEventListener('change',e=>{
+    const s2=loadSettings(); s2.defaultSort=e.target.value;
+    state.sort.key=s2.defaultSort; saveSettings(s2);
+    if(state.currentView==='leads') renderLeads();
+    toast('Default sort updated.','success',2000);
+  });
+}
+
 /* ── INIT ───────────────────────────────────────────────────── */
 (async()=>{
+  initSettings();
   await loadData();
+  const s=loadSettings();
   render();
+  setView(s.defaultView||'dashboard');
   setInterval(pollLeads, POLL_MS);
 
   // Register Service Worker + set up push notifications
