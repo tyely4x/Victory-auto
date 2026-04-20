@@ -1,0 +1,5 @@
+node_modules/
+backend/.env
+backend/data/leads.db
+.DS_Store
+Thumbs.db

@@ -1,0 +1,38 @@
+{
+  "name": "Victory Auto Sales — Lead Tracker",
+  "short_name": "VAS Leads",
+  "description": "Real-time lead CRM for Victory Auto Sales. Connects Facebook, Instagram, and TikTok inquiries directly into your pipeline.",
+  "start_url": "/lead-tracker.html",
+  "display": "standalone",
+  "background_color": "#07080f",
+  "theme_color": "#5b8df5",
+  "orientation": "portrait-primary",
+  "categories": ["business", "productivity"],
+  "icons": [
+    {
+      "src": "/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "screenshots": [],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/lead-tracker.html#dashboard",
+      "description": "Open the lead dashboard"
+    },
+    {
+      "name": "All Leads",
+      "url": "/lead-tracker.html#leads",
+      "description": "View all leads"
+    }
+  ]
+}
