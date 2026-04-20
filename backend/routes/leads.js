@@ -12,6 +12,7 @@ const router  = express.Router();
 
 const { getAllLeads, getLeadById, createLead, updateLead, deleteLead } = require('../services/db');
 const { computeScore, tierFromScore } = require('../services/scorer');
+const { savePushSubscription, removePushSubscription } = require('../services/notifier');
 
 function uid() {
   return 'l_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
@@ -127,6 +128,23 @@ router.delete('/:id', (req, res) => {
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
+});
+
+// Push subscription management
+router.post('/push/subscribe', (req, res) => {
+  const sub = req.body;
+  if (!sub?.endpoint) return res.status(400).json({ error: 'Invalid subscription' });
+  savePushSubscription(sub);
+  res.json({ success: true });
+});
+
+router.post('/push/unsubscribe', (req, res) => {
+  removePushSubscription(req.body);
+  res.json({ success: true });
+});
+
+router.get('/push/vapid-public-key', (req, res) => {
+  res.json({ key: process.env.VAPID_PUBLIC_KEY || null });
 });
 
 module.exports = router;

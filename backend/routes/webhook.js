@@ -10,6 +10,7 @@ const router   = express.Router();
 
 const { analyzeMessage }              = require('../services/analyzer');
 const { computeScore, tierFromScore } = require('../services/scorer');
+const { notifyNewLead }               = require('../services/notifier');
 const {
   createLead, getLeadByExternalId, appendToNotes
 } = require('../services/db');
@@ -283,6 +284,7 @@ async function processMessage({ externalId, message, platform, source, senderNam
 
   createLead(lead);
   console.log(`   ↳ ✅ Lead created: "${lead.name}" | ${lead.tier} | Score ${lead.score}`);
+  notifyNewLead(lead).catch(e => console.warn('Notify error:', e.message));
 }
 
 module.exports = router;

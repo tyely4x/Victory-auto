@@ -28,6 +28,35 @@ self.addEventListener('activate', event => {
   self.clients.claim();
 });
 
+// Push notification received
+self.addEventListener('push', event => {
+  let data = { title: 'Victory Auto', body: 'New lead received', icon: '/icon-192.png', url: '/lead-tracker.html' };
+  try { if (event.data) data = { ...data, ...JSON.parse(event.data.text()) }; } catch {}
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body:    data.body,
+      icon:    data.icon,
+      badge:   '/icon-192.png',
+      vibrate: [200, 100, 200],
+      data:    { url: data.url },
+      actions: [{ action: 'open', title: 'Open CRM' }]
+    })
+  );
+});
+
+// Notification click — open the app
+self.addEventListener('notificationclick', event => {
+  event.notification.close();
+  const url = event.notification.data?.url || '/lead-tracker.html';
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+      const existing = list.find(c => c.url.includes('lead-tracker'));
+      if (existing) return existing.focus();
+      return clients.openWindow(url);
+    })
+  );
+});
+
 // On fetch: network-first for API, cache-first for static assets
 self.addEventListener('fetch', event => {
   const url = new URL(event.request.url);

@@ -2096,13 +2096,50 @@ async function clearAll(){
   await loadData();
   render();
   setInterval(pollLeads, POLL_MS);
-  // Register Service Worker for PWA ("Add to Home Screen")
+
+  // Register Service Worker + set up push notifications
   if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js')
-      .then(()=>console.log('✅ Victory Auto SW registered'))
-      .catch(e=>console.warn('SW registration failed:', e));
+    try {
+      const reg = await navigator.serviceWorker.register('/sw.js');
+      console.log('✅ Victory Auto SW registered');
+      await setupPushNotifications(reg);
+    } catch(e) { console.warn('SW registration failed:', e); }
   }
 })();
+
+async function setupPushNotifications(reg) {
+  try {
+    // Get VAPID public key from backend
+    const r = await fetch(API_BASE + '/api/leads/push/vapid-public-key');
+    const { key } = await r.json();
+    if (!key) return;
+
+    // Check/request permission
+    const permission = await Notification.requestPermission();
+    if (permission !== 'granted') return;
+
+    // Subscribe to push
+    const sub = await reg.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey: urlBase64ToUint8Array(key)
+    });
+
+    // Send subscription to backend
+    await fetch(API_BASE + '/api/leads/push/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(sub)
+    });
+    console.log('🔔 Push notifications subscribed');
+  } catch(e) { console.warn('Push setup failed:', e); }
+}
+
+function urlBase64ToUint8Array(base64String) {
+  const padding = '='.repeat((4 - base64String.length % 4) % 4);
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/');
+  const raw = atob(base64);
+  return Uint8Array.from([...raw].map(c => c.charCodeAt(0)));
+}
 </script>
 
 </body>
