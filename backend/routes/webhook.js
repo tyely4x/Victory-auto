@@ -136,28 +136,31 @@ router.post('/tiktok', async (req, res) => {
 });
 
 // ── HANDLERS ─────────────────────────────────────────────────
+async function fetchFBProfile(userId) {
+  if (!process.env.PAGE_ACCESS_TOKEN) return {};
+  try {
+    const r = await fetch(
+      `https://graph.facebook.com/v19.0/${userId}?fields=first_name,last_name,name,username,profile_pic&access_token=${process.env.PAGE_ACCESS_TOKEN}`
+    );
+    return await r.json();
+  } catch { return {}; }
+}
+
 async function handleMessenger(event) {
   const senderId = event.sender.id;
-  let senderName = null;
+  let senderName = null, profilePic = null;
 
-  // Fetch sender profile from Graph API
-  if (process.env.PAGE_ACCESS_TOKEN) {
-    try {
-      const r = await fetch(
-        `https://graph.facebook.com/v19.0/${senderId}?fields=first_name,last_name&access_token=${process.env.PAGE_ACCESS_TOKEN}`
-      );
-      const d = await r.json();
-      if (d.first_name) senderName = [d.first_name, d.last_name].filter(Boolean).join(' ');
-    } catch { /* non-fatal */ }
-  }
+  const d = await fetchFBProfile(senderId);
+  if (d.first_name) senderName = [d.first_name, d.last_name].filter(Boolean).join(' ');
+  if (d.profile_pic) profilePic = d.profile_pic;
 
   console.log(`💬 Messenger: ${senderName || senderId} → "${event.message.text.slice(0, 80)}"`);
   await processMessage({
-    externalId: senderId, // Thread per sender — de-dupes repeat messages
+    externalId: senderId,
     message:    event.message.text,
     platform:   'Facebook Messenger',
     source:     'messenger',
-    senderName,
+    senderName, profilePic,
     isDMThread: true
   });
 }
@@ -165,7 +168,14 @@ async function handleMessenger(event) {
 async function handleFBComment(value) {
   const comment = value.message;
   const name    = value.from?.name || null;
+  const fromId  = value.from?.id   || null;
   if (!comment) return;
+
+  let profilePic = null;
+  if (fromId) {
+    const d = await fetchFBProfile(fromId);
+    if (d.profile_pic) profilePic = d.profile_pic;
+  }
 
   console.log(`👍 FB Comment: ${name || 'unknown'} → "${comment.slice(0, 80)}"`);
   await processMessage({
@@ -173,24 +183,18 @@ async function handleFBComment(value) {
     message:    comment,
     platform:   'Facebook',
     source:     'facebook_comment',
-    senderName: name,
+    senderName: name, profilePic,
     isDMThread: false
   });
 }
 
 async function handleInstagramDM(event) {
   const senderId = event.sender.id;
-  let senderName = null;
+  let senderName = null, profilePic = null;
 
-  if (process.env.PAGE_ACCESS_TOKEN) {
-    try {
-      const r = await fetch(
-        `https://graph.facebook.com/v19.0/${senderId}?fields=name,username&access_token=${process.env.PAGE_ACCESS_TOKEN}`
-      );
-      const d = await r.json();
-      senderName = d.name || (d.username ? '@' + d.username : null);
-    } catch { /* non-fatal */ }
-  }
+  const d = await fetchFBProfile(senderId);
+  senderName = d.name || (d.username ? '@' + d.username : null);
+  if (d.profile_pic) profilePic = d.profile_pic;
 
   console.log(`📸 Instagram DM: ${senderName || senderId} → "${event.message.text.slice(0, 80)}"`);
   await processMessage({
@@ -198,7 +202,7 @@ async function handleInstagramDM(event) {
     message:    event.message.text,
     platform:   'Instagram',
     source:     'instagram_dm',
-    senderName,
+    senderName, profilePic,
     isDMThread: true
   });
 }
@@ -206,7 +210,14 @@ async function handleInstagramDM(event) {
 async function handleInstagramComment(value) {
   const text     = value.text;
   const username = value.from?.username || null;
+  const fromId   = value.from?.id       || null;
   if (!text) return;
+
+  let profilePic = null;
+  if (fromId) {
+    const d = await fetchFBProfile(fromId);
+    if (d.profile_pic) profilePic = d.profile_pic;
+  }
 
   console.log(`📸 IG Comment: @${username || 'unknown'} → "${text.slice(0, 80)}"`);
   await processMessage({
@@ -215,12 +226,13 @@ async function handleInstagramComment(value) {
     platform:   'Instagram',
     source:     'instagram_comment',
     senderName: username ? '@' + username : null,
+    profilePic,
     isDMThread: false
   });
 }
 
 // ── CORE PROCESSING ───────────────────────────────────────────
-async function processMessage({ externalId, message, platform, source, senderName, isDMThread }) {
+async function processMessage({ externalId, message, platform, source, senderName, profilePic, isDMThread }) {
   // Analyze the message
   const analysis = await analyzeMessage({ message, platform, senderName });
 
@@ -257,10 +269,11 @@ async function processMessage({ externalId, message, platform, source, senderNam
     followUp:   analysis.suggestedFollowUp ? 1 : 0,
     notes:      analysis.notes     || '',
     source,
-    rawMessage: message.slice(0, 2000),
-    externalId: externalId || '',
-    createdAt:  now,
-    updatedAt:  now,
+    rawMessage:  message.slice(0, 2000),
+    externalId:  externalId || '',
+    profile_pic: profilePic || '',
+    createdAt:   now,
+    updatedAt:   now,
     score:      0,
     tier:       'New'
   };

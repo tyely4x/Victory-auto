@@ -1430,6 +1430,10 @@ function srcBadge(src) { const cls='src-'+(src||'manual'),lbl=SRC_LABELS[src]||s
 const AV_CLS = ['av-blue','av-purple','av-teal','av-amber','av-rose','av-pink'];
 function avCls(name) { let h=0; for(let c of name||'?') h=((h<<5)-h)+c.charCodeAt(0); return AV_CLS[Math.abs(h)%AV_CLS.length]; }
 function initials(name) { const w=(name||'?').split(' '); return (w[0][0]+(w[1]?w[1][0]:'')).toUpperCase(); }
+function avatar(l, size='35px', extraStyle='') {
+  if (l.profile_pic) return `<img src="${esc(l.profile_pic)}" alt="${esc(l.name)}" style="width:${size};height:${size};border-radius:50%;object-fit:cover;flex-shrink:0;${extraStyle}" onerror="this.outerHTML='<div class=\\'lead-avatar ${avCls(l.name)}\\' style=\\'width:${size};height:${size};font-size:calc(${size} * 0.38);${extraStyle}\\'>${initials(l.name)}</div>'">`;
+  return `<div class="lead-avatar ${avCls(l.name)}" style="width:${size};height:${size};font-size:calc(${size} * 0.38);${extraStyle}">${initials(l.name)}</div>`;
+}
 
 /* ── STATE ──────────────────────────────────────────────────── */
 const state = {
@@ -1554,7 +1558,7 @@ function renderDashboard(){
   const rec=[...L].sort((a,b)=>new Date(b.createdAt||0)-new Date(a.createdAt||0)).slice(0,6);
   $('recent-leads-list').innerHTML=rec.length?rec.map(l=>`
     <div class="lead-list-item" onclick="openDrawer('${l.id}')">
-      <div class="lead-avatar ${avCls(l.name)}">${initials(l.name)}</div>
+      ${avatar(l)}
       <div class="lead-info">
         <div class="lead-info-name">${esc(l.name)}</div>
         <div class="lead-info-detail">${esc(l.vehicle||l.platform||'—')} · ${relDate(l.createdAt)}</div>
@@ -1570,7 +1574,7 @@ function renderDashboard(){
   $('follow-count-badge').textContent=fu.length;
   $('followup-list').innerHTML=fu.length?fu.map(l=>`
     <div class="lead-list-item" onclick="openDrawer('${l.id}')">
-      <div class="lead-avatar ${avCls(l.name)}">${initials(l.name)}</div>
+      ${avatar(l)}
       <div class="lead-info">
         <div class="lead-info-name">${esc(l.name)}</div>
         <div class="lead-info-detail">${esc(l.vehicle||'—')} · Score ${l.score}</div>
@@ -1636,7 +1640,7 @@ function renderLeads(){
       </td>
       <td>
         <div style="display:flex;align-items:center;gap:9px;">
-          <div class="lead-avatar ${avCls(l.name)}" style="width:30px;height:30px;font-size:11px;">${initials(l.name)}</div>
+          ${avatar(l,'30px')}
           <div class="name-cell">
             <div class="n-name">${esc(l.name)}</div>
             <div class="n-contact">${esc([l.phone,l.email].filter(Boolean).join(' · ')||'—')}</div>
@@ -1685,7 +1689,7 @@ function renderPipeline(){
         ${sLeads.length?sLeads.map(l=>`
           <div class="pipe-card" onclick="openDrawer('${l.id}')">
             <div style="display:flex;align-items:center;gap:8px;margin-bottom:6px;">
-              <div class="lead-avatar ${avCls(l.name)}" style="width:26px;height:26px;font-size:10px;flex-shrink:0;">${initials(l.name)}</div>
+              ${avatar(l,'26px')}
               <div class="pipe-card-name">${esc(l.name)}</div>
             </div>
             <div class="pipe-card-vehicle">${esc(l.vehicle||l.platform||'No vehicle specified')}</div>
@@ -1722,7 +1726,7 @@ function openDrawer(id){
     <!-- Profile Header -->
     <div class="lead-profile">
       <div class="lead-profile-top">
-        <div class="lead-av-lg ${avCls(lead.name)}">${initials(lead.name)}</div>
+        ${avatar(lead,'56px')}
         <div class="lead-profile-info">
           <div class="lead-profile-name">${esc(lead.name)}</div>
           <div class="lead-profile-contact">${esc([lead.phone,lead.email].filter(Boolean).join('  ·  ')||'No contact info')}</div>
@@ -2044,7 +2048,7 @@ function renderLeadsCards(){
     <div style="background:var(--card);border:1px solid var(--bdr);border-radius:var(--radius);padding:16px 18px;cursor:pointer;border-left:3px solid ${l.tier==='Hot'?'var(--hot)':l.tier==='Warm'?'var(--warm)':l.tier==='Cool'?'var(--teal)':'var(--new-c)'};" onclick="openDrawer('${l.id}')">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">
         <div style="display:flex;align-items:center;gap:10px;">
-          <div class="lead-avatar ${avCls(l.name)}" style="width:34px;height:34px;font-size:13px;">${initials(l.name)}</div>
+          ${avatar(l,'34px')}
           <div><div style="font-weight:700;font-size:14px;color:var(--white);">${esc(l.name)}</div><div style="font-size:11px;color:var(--txt-d);">${esc(l.vehicle||l.platform||'—')}</div></div>
         </div>
         <div style="text-align:right;"><span class="badge ${tierBadgeCls(l.tier)}">${l.tier} · ${l.score}</span></div>

@@ -44,10 +44,14 @@ async function initDb() {
       source      TEXT          DEFAULT 'manual',
       rawMessage  TEXT          DEFAULT '',
       externalId  TEXT          DEFAULT '',
+      profile_pic TEXT          DEFAULT '',
       createdAt   TEXT          NOT NULL,
       updatedAt   TEXT          NOT NULL
     );
   `);
+
+  // Add profile_pic column to existing databases that predate this field
+  try { db.run(`ALTER TABLE leads ADD COLUMN profile_pic TEXT DEFAULT ''`); } catch { /* already exists */ }
 
   persist(); // Save initial schema
   console.log('✅ Database ready →', DB_PATH);
@@ -97,15 +101,15 @@ function createLead(lead) {
   db.run(`
     INSERT INTO leads
       (id, name, phone, email, platform, status, timeline, financing, vehicle,
-       assignedTo, followUp, notes, score, tier, source, rawMessage, externalId, createdAt, updatedAt)
-    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+       assignedTo, followUp, notes, score, tier, source, rawMessage, externalId, profile_pic, createdAt, updatedAt)
+    VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
   `, [
     lead.id, lead.name, lead.phone||'', lead.email||'', lead.platform||'Manual',
     lead.status||'New', lead.timeline||'Browsing', lead.financing||'Financing',
     lead.vehicle||'', lead.assignedTo||'', lead.followUp ? 1 : 0,
     lead.notes||'', lead.score||0, lead.tier||'New',
     lead.source||'manual', lead.rawMessage||'', lead.externalId||'',
-    lead.createdAt, lead.updatedAt
+    lead.profile_pic||'', lead.createdAt, lead.updatedAt
   ]);
   persist();
   return getLeadById(lead.id);
