@@ -776,6 +776,49 @@ body.card-mode .leads-cards-grid { display: flex; }
   .page-actions .date-pill { display: none; }
 }
 
+/* ── LIGHT MODE ───────────────────────────────────────────── */
+body.light-mode {
+  --bg:        #eef0f7;
+  --sidebar:   #ffffff;
+  --card:      #ffffff;
+  --card-2:    #f4f6fb;
+  --card-3:    #eaecf5;
+  --overlay:   rgba(20,25,50,0.65);
+  --bdr:       rgba(0,0,0,0.07);
+  --bdr-2:     rgba(0,0,0,0.11);
+  --bdr-3:     rgba(0,0,0,0.18);
+  --txt:       #2a3350;
+  --txt-d:     #6b7a9a;
+  --txt-m:     #aab0c4;
+  --white:     #111827;
+  --shadow:    0 4px 20px rgba(0,0,0,0.07);
+  --shadow-lg: 0 12px 40px rgba(0,0,0,0.13);
+}
+body.light-mode table.leads-tbl thead th { background: #f4f6fb; }
+body.light-mode .topbar-search { background: #f4f6fb; }
+body.light-mode .filter-select { background: #f4f6fb; }
+body.light-mode .field-input,
+body.light-mode .field-select,
+body.light-mode .field-textarea { background: #f4f6fb; color: var(--txt); }
+body.light-mode .score-preview-bar { background: #f4f6fb; }
+body.light-mode ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); }
+
+/* ── THEME TOGGLE BUTTON ──────────────────────────────────── */
+.theme-toggle {
+  display: flex; background: var(--card-2); border: 1px solid var(--bdr-2);
+  border-radius: 8px; padding: 3px; gap: 3px;
+}
+.theme-btn {
+  padding: 5px 14px; border-radius: 6px; border: none;
+  font-size: 12px; font-weight: 600; font-family: inherit;
+  cursor: pointer; transition: all var(--t);
+  background: transparent; color: var(--txt-d);
+}
+.theme-btn.active {
+  background: var(--card); color: var(--white);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.2);
+}
+
 /* ── BRAND SIDEBAR LOGO ───────────────────────────────────── */
 .sidebar-brand { height: 64px; }
 .brand-logo {
@@ -1229,6 +1272,19 @@ body.card-mode .leads-cards-grid { display: flex; }
             Appearance
           </div>
           <div class="settings-card">
+            <div class="settings-row">
+              <div class="settings-label">
+                <div class="settings-label-title">Theme</div>
+                <div class="settings-label-sub">Switch between light and dark mode</div>
+              </div>
+              <div class="settings-control">
+                <div class="theme-toggle" id="theme-toggle">
+                  <button class="theme-btn active" data-theme="dark">Dark</button>
+                  <button class="theme-btn" data-theme="light">Light</button>
+                </div>
+              </div>
+            </div>
+            <div class="settings-divider"></div>
             <div class="settings-row">
               <div class="settings-label">
                 <div class="settings-label-title">Background Brightness</div>
@@ -2184,15 +2240,17 @@ const ACCENT_COLORS = {
   emerald: { main:'#10b981', light:'#34d399', dim:'rgba(16,185,129,0.10)', glow:'rgba(16,185,129,0.22)' },
   orange:  { main:'#f97316', light:'#fb923c', dim:'rgba(249,115,22,0.10)', glow:'rgba(249,115,22,0.22)' },
 };
-const defaultSettings = { brightness:50, accentColor:'blue', smsEnabled:true, pushEnabled:true, threshold:'warm', defaultView:'dashboard', defaultSort:'score' };
+const defaultSettings = { brightness:50, accentColor:'blue', theme:'dark', smsEnabled:true, pushEnabled:true, threshold:'warm', defaultView:'dashboard', defaultSort:'score' };
 
 function loadSettings(){ try{ return {...defaultSettings,...JSON.parse(localStorage.getItem(SETTINGS_KEY)||'{}')}; }catch{ return {...defaultSettings}; } }
 function saveSettings(s){ localStorage.setItem(SETTINGS_KEY,JSON.stringify(s)); }
 
 function applySettings(s){
   const r=document.documentElement;
-  // Brightness: maps 0–100 to css filter 0.55–1.30
-  const bVal=(0.55+(s.brightness/100)*0.75).toFixed(2);
+  // Theme
+  document.body.classList.toggle('light-mode', s.theme==='light');
+  // Brightness: maps 0–100 to css filter 0.55–1.30 (skip in light mode)
+  const bVal=s.theme==='light'?'1':(0.55+(s.brightness/100)*0.75).toFixed(2);
   document.querySelector('.app-shell').style.filter=`brightness(${bVal})`;
   // Accent color overrides --blue family
   const ac=ACCENT_COLORS[s.accentColor]||ACCENT_COLORS.blue;
@@ -2213,10 +2271,18 @@ function syncSettingsUI(s){
   const dv=$('s-default-view'); if(dv) dv.value=s.defaultView;
   const ds=$('s-default-sort'); if(ds) ds.value=s.defaultSort;
   document.querySelectorAll('.color-swatch').forEach(sw=>sw.classList.toggle('active',sw.dataset.color===s.accentColor));
+  document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.theme===s.theme));
 }
 
 function initSettings(){
   const s=loadSettings(); applySettings(s); syncSettingsUI(s);
+
+  document.querySelectorAll('.theme-btn').forEach(btn=>{
+    btn.addEventListener('click',()=>{
+      const s2=loadSettings(); s2.theme=btn.dataset.theme; saveSettings(s2); applySettings(s2);
+      document.querySelectorAll('.theme-btn').forEach(b=>b.classList.toggle('active',b.dataset.theme===s2.theme));
+    });
+  });
 
   $('s-brightness')?.addEventListener('input',e=>{
     const s2=loadSettings(); s2.brightness=+e.target.value;
